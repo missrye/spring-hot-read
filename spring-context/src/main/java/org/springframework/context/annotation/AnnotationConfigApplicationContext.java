@@ -91,7 +91,10 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
 		this();
+		// 是否开启对循环依赖的支持，默认是支持单例的循环依赖
+		// setAllowCircularReferences(false);
 		register(componentClasses);
+		// 调用 refresh() 方法初始化spring容器
 		refresh();
 	}
 
