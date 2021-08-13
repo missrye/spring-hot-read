@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+		 version="4.0">
+
+
+<!--conventional mvc start-->
+	<servlet>
+		<servlet-name>sp</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/applicationContext.xml</param-value>
+		</init-param>
+	</servlet>
+	<context-param>
+		<param-name>globalInitializerClasses</param-name>
+		<param-value>com.source.hot.mvc.applicationContextInitializer.GlobalApplicationContextInitializer</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextInitializerClasses</param-name>
+		<param-value>com.source.hot.mvc.applicationContextInitializer.ContextApplicationContextInitializer</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<servlet-mapping>
+		<servlet-name>sp</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<!--conventional mvc start-->
+
+
+<!--Start ServletForwardingController Testing-->
+
+
+	<servlet>
+		<servlet-name>ServletForwardingControllerServlet</servlet-name>
+		<servlet-class>com.source.hot.mvc.servlet.ServletForwardingControllerServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>servlet-forwarding-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>servlet-forwarding-dispatcher</servlet-name>
+		<url-pattern>/servlet-forwarding/*</url-pattern>
+	</servlet-mapping>
+
+
+	<!--End ServletForwardingController Testing-->
+
+
+	<!--Start ParameterizableViewController Testing-->
+	<servlet>
+		<servlet-name>parameterizable-view-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>parameterizable-view-dispatcher</servlet-name>
+		<url-pattern>/parameterizable-view/*</url-pattern>
+	</servlet-mapping>
+	<!--End ParameterizableViewController Testing-->
+
+
+	<!--Start ServletWrappingController Testing-->
+	<servlet>
+		<servlet-name>servlet-wrapping-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>servlet-wrapping-dispatcher</servlet-name>
+		<url-pattern>/servlet-wrapping/*</url-pattern>
+	</servlet-mapping>
+	<!--End ServletWrappingController Testing-->
+
+	<!--Start UrlFilenameViewController Testing-->
+	<servlet>
+		<servlet-name>url-filename-view-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>url-filename-view-dispatcher</servlet-name>
+		<url-pattern>/url-filename-view/*</url-pattern>
+	</servlet-mapping>
+	<!--End UrlFilenameViewController Testing-->
+
+	<!--Start Return Json Servlet -->
+	<servlet>
+		<servlet-name>servlet-annotation-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>servlet-annotation-dispatcher</servlet-name>
+		<url-pattern>/servlet-annotation/*</url-pattern>
+	</servlet-mapping>
+	<!--End Return Json Servlet -->
+
+	<!--Start xmlViewResolver Servlet -->
+	<servlet>
+		<servlet-name>xmlViewResolver</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>xmlViewResolver</servlet-name>
+		<url-pattern>/xmlViewResolver/*</url-pattern>
+	</servlet-mapping>
+	<!--End xmlViewResolver Servlet -->
+
+	<!--Start beanNameViewResolver Servlet -->
+	<servlet>
+		<servlet-name>beanNameViewResolver</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>beanNameViewResolver</servlet-name>
+		<url-pattern>/beanNameViewResolver/*</url-pattern>
+	</servlet-mapping>
+	<!--End beanNameViewResolver Servlet -->
+
+	<!--Start xslt Servlet -->
+	<servlet>
+		<servlet-name>xslt</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>xslt</servlet-name>
+		<url-pattern>/xslt/*</url-pattern>
+	</servlet-mapping>
+	<!--End xslt Servlet -->
+
+</web-app>

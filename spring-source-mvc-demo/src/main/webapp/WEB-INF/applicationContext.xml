@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<context:component-scan base-package="com.source.hot"/>
+	<mvc:default-servlet-handler/>
+	<mvc:annotation-driven/>
+	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/page/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+	<mvc:resources mapping="/**" location="/**">
+		<mvc:resource-chain resource-cache="true" >
+			<mvc:resolvers>
+				<mvc:version-resolver>
+					<!-- 实际上这内部也支持用户自定义 -->
+					<mvc:content-version-strategy patterns="/**"/>
+					<mvc:fixed-version-strategy version="1.0" patterns="/**/**"/>
+				</mvc:version-resolver>
+			</mvc:resolvers>
+		</mvc:resource-chain>
+	</mvc:resources>
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean id="AllHandlerInterceptor" class="com.source.hot.mvc.handlerInterceptor.AllHandlerInterceptor"/>
+		</mvc:interceptor>
+
+		<mvc:interceptor>
+			<mvc:mapping path="/init" />
+			<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+				<property name="paramName" value="lang"></property>
+			</bean>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/theme"/>
+			<bean id="themeChangeInterceptor" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor">
+				<property name="paramName" value="theme"/>
+			</bean>
+		</mvc:interceptor>
+
+	</mvc:interceptors>
+	<mvc:cors>
+		<mvc:mapping path="/**"/>
+	</mvc:cors>
+
+	<bean id="controllerImpl" class="com.source.hot.mvc.ctr.ControllerImpl"/>
+
+
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="1"/>
+		<property name="mappings">
+			<value>
+				/hello=controllerImpl
+			</value>
+		</property>
+	</bean>
+
+	<bean name="/hrh" class="com.source.hot.mvc.httpRequestHandler.HttpRequestHandlerFirst" />
+
+
+	<bean id="messageSource"
+		  class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/welcome" />
+	</bean>
+	<bean id="localeResolver"
+		  class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+	</bean>
+
+
+	<bean id="themeSource" class="org.springframework.ui.context.support.ResourceBundleThemeSource">
+		<property name="defaultEncoding" value="UTF-8"/>
+		<property name="basenamePrefix" value="themes."/>
+	</bean>
+	<mvc:resources mapping="/themes/**" location="/themes/"/>
+	<bean id="themeResolver" class="org.springframework.web.servlet.theme.CookieThemeResolver">
+		<property name="defaultThemeName" value="bright"/>
+		<property name="cookieName" value="my-theme-cookie"/>
+	</bean>
+
+	<!-- 多部分文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"></property>
+		<property name="maxUploadSize" value="10485760000"></property>
+		<property name="maxInMemorySize" value="40960"></property>
+	</bean>
+	<bean id="viewNameTranslator" class="org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator">
+		<property name="prefix" value="app-"/>
+		<property name="suffix" value="-data"/>
+	</bean>
+	<bean id="flashMapManager" class="org.springframework.web.servlet.support.SessionFlashMapManager"/>
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+
+</beans>
