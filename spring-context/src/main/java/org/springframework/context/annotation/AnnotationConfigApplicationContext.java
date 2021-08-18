@@ -65,11 +65,18 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 
 
 	/**
+	 * AnnotatedBeanDefinitionReader和ClassPathBeanDefinitionScanner最大的区别是：
+	 * 		1）AnnotatedBeanDefinitionReader支持注册单个的BeanDefinition
+	 * 		2）而ClassPathBeanDefinitionScanner会一次注册所有扫描到的BeanDefinition
+	 *
 	 * Create a new AnnotationConfigApplicationContext that needs to be populated
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
+		// 1.1 创建一个read对象：AnnotatedBeanDefinitionReader
 		this.reader = new AnnotatedBeanDefinitionReader(this);
+
+		// 1.2 创建一个scanner对象：ClassPathBeanDefinitionScanner
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 

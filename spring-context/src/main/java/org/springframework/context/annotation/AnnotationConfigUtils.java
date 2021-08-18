@@ -279,16 +279,28 @@ public abstract class AnnotationConfigUtils {
 		}
 	}
 
+	// 这个方法名称直译过来就是----应用Scoped中的ProxyMode属性
+	// 这个属性有什么用呢？
+	// ProxyMode属性一共有下面几种取值
+	//	1.DEFAULT:默认值，默认情况下取no
+	//	2.NO:不开启代理
+	//	3.INTERFACES:使用jdk动态代理
+	//	4.TARGET_CLASS:使用cglib代理
+	// 假设我们有一个单例的对象A，其中有一个属性B，B的作用域是session的，这个时候容器在启动时创建A的过程中需要为A注入属性B，但是属性B的作用域为session,这种情况下注入必定会报错的
+	// 但是当我们将ProxyMode属性配置为INTERFACES/TARGET_CLASS时，它会暴露一个代理对象，ProxyMode可以配置代理对象的生成策略是使用jdk动态代理还是生成cglib动态代理,那么当我们在创建A时，会先注入一个B的代理对象而不是直接报错
 	static BeanDefinitionHolder applyScopedProxyMode(
 			ScopeMetadata metadata, BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
 
-		// 判断是否需要进行代理对象创建
+		// 根据scopedProxyMode进行判断，如果是NO，直接返回原有的bd并添加到容器的bdMap中
 		ScopedProxyMode scopedProxyMode = metadata.getScopedProxyMode();
 		if (scopedProxyMode.equals(ScopedProxyMode.NO)) {
 			return definition;
 		}
+
+		// 是否采用cglib代理
 		boolean proxyTargetClass = scopedProxyMode.equals(ScopedProxyMode.TARGET_CLASS);
-		// 代理对象创建
+
+		// 调用ScopedProxyCreator的createScopedProxy，创建代理对象对应的bd
 		return ScopedProxyCreator.createScopedProxy(definition, registry, proxyTargetClass);
 	}
 

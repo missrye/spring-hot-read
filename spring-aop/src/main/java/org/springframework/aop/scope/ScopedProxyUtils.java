@@ -44,6 +44,8 @@ public abstract class ScopedProxyUtils {
 
 
 	/**
+	 * 根据目标对象的bd生成代理对象的bd,并且会将目标对象的bd注册到容器中
+	 *
 	 * Generate a scoped proxy for the supplied target bean, registering the target
 	 * bean with an internal name and setting 'targetBeanName' on the scoped proxy.
 	 * @param definition the original bean definition
@@ -56,17 +58,21 @@ public abstract class ScopedProxyUtils {
 	public static BeanDefinitionHolder createScopedProxy(BeanDefinitionHolder definition,
 			BeanDefinitionRegistry registry, boolean proxyTargetClass) {
 
-		// 提取原始的 Bean Name
+		// 目标对象的名称
 		String originalBeanName = definition.getBeanName();
-		// 从 Bean Definition Holder 中获取 Bean Defintion
+
+		// 目标对象的bd
 		BeanDefinition targetDefinition = definition.getBeanDefinition();
-		// 计算 BeanName
+
+		// 将来会将目标对象的bd注册到容器中，targetBeanName作为注册时的key
+		// targetBeanName = "scopedTarget."+originalBeanName
 		String targetBeanName = getTargetBeanName(originalBeanName);
 
-		// 创建代理的 Bean Definition 对象，数据会从原始的 Bean Definition 中迁移部分
-		// Create a scoped proxy definition for the original bean name,
-		// "hiding" the target bean in an internal target definition.
+		// 创建代理对象的bd,可以看到代理对象会是一个factoryBean的介绍请参考《》，关于factoryBean的介绍请参考我的Spring官网阅读系列第七篇，这里不做过多介绍
 		RootBeanDefinition proxyDefinition = new RootBeanDefinition(ScopedProxyFactoryBean.class);
+
+		// 代理对象所装饰的bd就是目标对象的bd
+		// 拷贝了部分目标对象bd中的属性到代理对象的bd中
 		proxyDefinition.setDecoratedDefinition(new BeanDefinitionHolder(targetDefinition, targetBeanName));
 		proxyDefinition.setOriginatingBeanDefinition(targetDefinition);
 		proxyDefinition.setSource(definition.getSource());

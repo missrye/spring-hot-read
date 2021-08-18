@@ -21,6 +21,6 @@ public class AnnotationConfigApplicationContextDemo {
 
 		System.out.println("======= Application test start... =======");
 
-		System.out.println(ac.getBean(XService.class.getName()));
+		System.out.println(ac.getBean(XService.class));
 	}
 }
