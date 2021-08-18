@@ -604,9 +604,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
                 // Allows post-processing of the bean factory in context subclasses.
                 postProcessBeanFactory(beanFactory);
 
-                // 1、执行 bean 工厂后置处理器
+                // 1、执行 beanFactory 后置处理器
                 // 2、解析类成 beanDefinition 对象，并且 put 到 beanDefinitionMap 当中
                 // 3、再次执行 bean 工厂后置处理器完成 cglib 代理
+                // 完成了所谓的扫描和 parse(类---beanDefinition)
                 // Invoke factory processors registered as beans in the context.
                 invokeBeanFactoryPostProcessors(beanFactory);
 
