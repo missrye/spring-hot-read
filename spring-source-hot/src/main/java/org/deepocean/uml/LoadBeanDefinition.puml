@@ -1,0 +1,33 @@
+@startuml
+hide footbox
+title XmlBeanFactory加载Bean时序图
+
+'== start ==
+
+participant XmlBeanFactory
+
+XmlBeanFactory -> XmlBeanDefinitionReader ++: 1 loadBeanDefinitions(resource)
+
+XmlBeanDefinitionReader -> EncodedResource ++: 1.1 new EncodedResource(resource)
+EncodedResource --> XmlBeanDefinitionReader --: 1.2 encodedResource EncodedResource
+
+XmlBeanDefinitionReader -> XmlBeanDefinitionReader ++: 1.3 loadBeanDefinitions(encodedResource)
+XmlBeanDefinitionReader -> EncodedResource ++: 1.3.1 getResource()
+EncodedResource --> XmlBeanDefinitionReader --: 1.3.2 resource Resource
+
+XmlBeanDefinitionReader -> Resource ++: 1.3.3 getInputStream()
+Resource --> XmlBeanDefinitionReader --: 1.3.4 inputStream InputStream
+
+XmlBeanDefinitionReader -> InputSource ++: 1.3.5 new InputSource(inputStream)
+InputSource --> XmlBeanDefinitionReader --: 1.3.6 inputSource InputSource
+
+XmlBeanDefinitionReader -> XmlBeanDefinitionReader ++: 1.3.7 doLoadBeanDefinitions(inputSource, encodedResource.getResource)
+XmlBeanDefinitionReader --> XmlBeanDefinitionReader --: 1.3.8 loadedBeanDefinitionNum int
+
+XmlBeanDefinitionReader --> XmlBeanDefinitionReader --: 1.4 loadedBeanDefinitionNum int
+
+return 2 loadedBeanDefinitionNum int
+
+'== end ==
+
+@enduml

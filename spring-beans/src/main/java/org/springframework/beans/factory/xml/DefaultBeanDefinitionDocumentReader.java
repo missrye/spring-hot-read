@@ -174,11 +174,11 @@ public class DefaultBeanDefinitionDocumentReader  implements BeanDefinitionDocum
 			}
 		}
 
-		// 前置处理
+		// 解析前处理，留给子类实现
 		preProcessXml(root);
-		// bean definition 处理
+		// 解析并注册BeanDefinition
 		parseBeanDefinitions(root, this.delegate);
-		// 后置 xml 处理
+		// 解析前处理，留给子类实现
 		postProcessXml(root);
 
 		this.delegate = parent;
@@ -200,7 +200,7 @@ public class DefaultBeanDefinitionDocumentReader  implements BeanDefinitionDocum
 	 * @param root the DOM root element of the document
 	 */
 	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
-		// 是否是默认的命名空间
+		// 对beans的处理
 		if (delegate.isDefaultNamespace(root)) {
 			// 子节点列表
 			NodeList nl = root.getChildNodes();
@@ -210,11 +210,11 @@ public class DefaultBeanDefinitionDocumentReader  implements BeanDefinitionDocum
 					Element ele = (Element) node;
 					// 是否是默认的命名空间
 					if (delegate.isDefaultNamespace(ele)) {
-						// 处理标签的方法
+						// 对bean的处理
 						parseDefaultElement(ele, delegate);
 					}
 					else {
-						// 处理自定义标签
+						// 对bean的处理
 						delegate.parseCustomElement(ele);
 					}
 				}
@@ -227,24 +227,33 @@ public class DefaultBeanDefinitionDocumentReader  implements BeanDefinitionDocum
 	}
 
 	/**
-	 * 解析 element 元素
+	 * 解析默认标签元素，主要包括import、alias、bean、beans
+	 * <blockquote>
+	 *     <ul>
+	 *         <li>{@linkplain #IMPORT_ELEMENT import}</li>
+	 *         <li>{@linkplain #ALIAS_ELEMENT alias}</li>
+	 *         <li>{@linkplain #BEAN_ELEMENT bean}</li>
+	 *         <li>{@linkplain #NESTED_BEANS_ELEMENT beans}</li>
+	 *     </ul>
+	 * </blockquote>
+	 *
 	 * @param ele
 	 * @param delegate
 	 */
 	private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
-		// 解析 import 标签
+		// 处理 import 标签
 		if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
 			importBeanDefinitionResource(ele);
 		}
-		// 解析 alias 标签
+		// 处理 alias 标签
 		else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) {
 			processAliasRegistration(ele);
 		}
-		// 解析 bean 标签
+		// 最核心: 处理 bean 标签
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
 			processBeanDefinition(ele, delegate);
 		}
-		// 解析 beans 标签
+		// 处理 beans 标签
 		// 嵌套的 beans
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
 			// recurse
@@ -383,25 +392,28 @@ public class DefaultBeanDefinitionDocumentReader  implements BeanDefinitionDocum
 	 * Process the given bean element, parsing the bean definition
 	 * and registering it with the registry.
 	 *
-	 * 解析 bean 标签
+	 * 解析并注册bean标签元素
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
-		// 创建 bean definition
+		// 委托 BeanDefinitionParserDelegate 类 parseBeanDefinitionElement方法 进行元素解析
+		// 解析后返回的 BeanDefinitionHolder 实例，已经包含配置文件配置的各种属性
+		// 包括: class、name、id、alias等
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
-			// bean definition 装饰
+			// 当返回 bdHolder 不为空时，若存在默认标签子标签有自定义属性
+			// 还需要对自定义标签进行解析
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
-				// Register the final decorated instance.
-				// 注册beanDefinition
+				// 解析完成后，需要对解析后的bdHolder进行注册
+				// 注册委托给 BeanDefinitionReaderUtils 类 registerBeanDefinition 方法
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			}
 			catch (BeanDefinitionStoreException ex) {
 				getReaderContext().error("Failed to register bean definition with name '" +
 						bdHolder.getBeanName() + "'", ele, ex);
 			}
-			// Send registration event.
-			// component注册事件触发
+			// 发出响应时间，通知想关的监听器
+			// 这个 bean 已经加载完成
 			getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));
 		}
 	}
