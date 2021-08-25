@@ -1,0 +1,27 @@
+@startuml
+'严格符合uml标准，线头为三角形，不能为箭头形
+skinparam style strictuml
+hide footbox
+title bean标签解析及注册
+
+participant DefaultBeanDefinitionDocumentReader
+
+DefaultBeanDefinitionDocumentReader -> DefaultBeanDefinitionDocumentReader ++: 1 processBeanDefinition(Element, BeanDefinitionParserDelegate)
+
+DefaultBeanDefinitionDocumentReader -> BeanDefinitionParserDelegate ++: 1.1 parseBeanDefinitionElement(Element)
+return 1.2 bdHolder BeanDefinitonHolder
+
+opt bdHolder!=null
+
+    DefaultBeanDefinitionDocumentReader -> BeanDefinitionParserDelegate ++: 1 decorateBeanDefinitionIfRequired(Element, BeanDefinitonHolder)
+    return 2 bdHolder BeanDefinitonHolder
+
+    DefaultBeanDefinitionDocumentReader -> BeanDefinitionReaderUtils ++: 3 registerBeanDefinition(BeanDefinitonHolder, BeanDefinitionRegistry)
+    '||20||
+    deactivate BeanDefinitionReaderUtils
+    DefaultBeanDefinitionDocumentReader -> XmlReaderContext ++: 4 fireComponentRegistered(BeanComponentDefinition)
+    deactivate XmlReaderContext
+
+end
+
+@enduml
