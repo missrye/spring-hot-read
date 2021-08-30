@@ -439,13 +439,12 @@ public class BeanDefinitionParserDelegate {
 	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
-		// 第一部分
-		// 获取 id
+		// 解析 id 属性
 		String id = ele.getAttribute(ID_ATTRIBUTE);
-		// 获取 name
+		// 解析 name 属性
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 
-		// 别名列表
+		// 分割 name 属性
 		List<String> aliases = new ArrayList<>();
 		// 是否有 name 属性
 		if (StringUtils.hasLength(nameAttr)) {
