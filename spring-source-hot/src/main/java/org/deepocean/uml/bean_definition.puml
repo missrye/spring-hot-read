@@ -1,0 +1,13 @@
+@startuml
+interface BeanDefiniton
+abstract AbstractBeanDefiniton
+
+BeanDefiniton <|.. AbstractBeanDefiniton
+
+AbstractBeanDefiniton <|-- RootBeanDefiniton
+AbstractBeanDefiniton <|-- GenericBeanDefiniton
+AbstractBeanDefiniton <|-- ChildBeanDefiniton
+
+
+
+@enduml
