@@ -716,7 +716,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			// 设置属性
+			// 填充属性
 			populateBean(beanName, mbd, instanceWrapper);
 			// 实例化bean
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
@@ -2201,7 +2201,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// 第三部分
 		try {
-			// 执行实例化函数
+			// 执行初始化方法
 			invokeInitMethods(beanName, wrappedBean, mbd);
 		}
 		catch (Throwable ex) {

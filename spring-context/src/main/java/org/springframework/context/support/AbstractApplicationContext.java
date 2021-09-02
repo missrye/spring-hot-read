@@ -587,52 +587,68 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
     @Override
     public void refresh() throws BeansException, IllegalStateException {
         synchronized (this.startupShutdownMonitor) {
-            // Prepare this context for refreshing.
-            // 准备刷新此上下文。
+            /**
+             * Prepare this context for refreshing.
+             *
+             * 前戏：做容器初始化前的准备工作
+             * 1、设置容器的启动时间
+             * 2、设置活跃状态为true
+             * 3、设置关闭状态为false
+             * 4、获取Enviroment对象，并加载当前系统的属性值到Enviroment对象中
+             * 5、准备监听器和事件的集合对象，默认为空的集合
+             */
             prepareRefresh();
 
-			// 创建出 beanFactory
-            // Tell the subclass to refresh the internal bean factory.
+            /**
+             * Tell the subclass to refresh the internal bean factory.
+             *
+             * 创建容器对象: DefaultListableBeanFactory
+             * 加载xml配置文件的属性值到当前工厂中，最重要的就是BeanDefinition
+             */
             ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
             // Prepare the bean factory for use in this context.
-			// 准备 beanFactory , 对 beanFactory 进行设置数据等
-            // 配置工厂的标准上下文环境,比如上下文类加载器和后处理器。
+			// beanFactory的准备工作, 对各种属性进行填充
+            // e.g.配置工厂的标准上下文环境,比如上下文类加载器和后处理器。
             prepareBeanFactory(beanFactory);
 
             try {
-				// beanFactory 在子类中进行后置处理
                 // Allows post-processing of the bean factory in context subclasses.
+                // 子类覆盖方法做额外的处理，此处我们自己一般不做任何扩展工作，但是可以查看web中的代码，是有具体实现的
                 postProcessBeanFactory(beanFactory);
 
-                // 1、执行 beanFactory 后置处理器
-                // 2、解析类成 beanDefinition 对象，并且 put 到 beanDefinitionMap 当中
-                // 3、再次执行 bean 工厂后置处理器完成 cglib 代理
-                // 完成了所谓的扫描和 parse(类---beanDefinition)
-                // Invoke factory processors registered as beans in the context.
+                /**
+                 * Invoke factory processors registered as beans in the context.
+                 *
+                 * 1、执行 beanFactory 后置处理器
+                 * 2、解析类成 beanDefinition 对象，并且 put 到 beanDefinitionMap 当中
+                 * 3、再次执行 bean 工厂后置处理器完成 cglib 代理
+                 * 完成了所谓的扫描和 parse(类---beanDefinition)
+                 */
                 invokeBeanFactoryPostProcessors(beanFactory);
 
-                // 注册 beanPostProcessor
                 // Register bean processors that intercept bean creation.
+                // 注册bean后置处理器，这里只是注册功能，真正调用的是getBean()方法
                 registerBeanPostProcessors(beanFactory);
 
-                // 实例化 message source 相关信息
                 // Initialize message source for this context.
+                // 为上下文初始化message源。即不同语言的消息体，国际化处理，在springmvc的时候通过国际化的代码重点看
                 initMessageSource();
 
-                // 实例化 应用事件传播器
                 // Initialize event multicaster for this context.
+                // 初始化事件监听多路广播器
                 initApplicationEventMulticaster();
 
                 // Initialize other special beans in specific context subclasses.
+                // 留给子类初始化其它的bean
                 onRefresh();
 
                 // Check for listener beans and register them.
-				// 注册监听器
+				// 在所有注册的bean中查找listener bean，注册到消息广播器中
                 registerListeners();
 
                 // Instantiate all remaining (non-lazy-init) singletons.
-				// 完成 beanFactory 的实例化
+				// 实例化剩下的单实例（非懒加载的）
                 finishBeanFactoryInitialization(beanFactory);
 
                 // Last step: publish corresponding event.
