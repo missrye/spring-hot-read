@@ -734,6 +734,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// 第五部分
 		// 依赖相关处理
+		// 循环依赖的核心处理逻辑
 		if (earlySingletonExposure) {
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {

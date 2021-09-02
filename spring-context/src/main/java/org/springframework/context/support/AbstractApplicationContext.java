@@ -640,7 +640,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
                 initApplicationEventMulticaster();
 
                 // Initialize other special beans in specific context subclasses.
-                // 留给子类初始化其它的bean
+                // 模板方法，留给子类初始化其它的bean
                 onRefresh();
 
                 // Check for listener beans and register them.
