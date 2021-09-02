@@ -314,12 +314,21 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	@SuppressWarnings("unchecked")
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
-		// 转换beanName
+		// 提取beanName
 		final String beanName = transformedBeanName(name);
 		Object bean;
 
-		// Eagerly check singleton cache for manually registered singletons.
-		// 获取单例对象
+		/*
+		 * Eagerly check singleton cache for manually registered singletons.
+		 *
+		 * 检查缓存中或者实例工厂中是否有对应的实例
+		 * 为什么首先使用这段代码？
+		 * 因为在创建单例bean的时候会存在依赖注入的情况，而在创建依赖的时候为了避免循环依赖
+		 * spring创建bean的原则是不等bean创建完成就会将创建bean的ObjectFactory提早曝光
+		 * 也就是将ObjectFactory放到缓存中，一旦下个bean创建时候需要依赖上个bean，则直接使用ObjectFactory
+		 *
+		 * 直接尝试从缓存或者singletonFactories中的ObjectFactory中获取
+		 */
 		Object sharedInstance = getSingleton(beanName);
 		// 单例对象是否存在 参数是否为空
 		if (sharedInstance != null && args == null) {
